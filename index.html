@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CareFirst Pharmacy</title>
+<style>
+:root{--navy:#0f3d4a;--yellow:#0e7490;--gold:#67e8f9;--bg:#f1f8fa;--card:#fff;--text:#1b2233;--muted:#6b7488;--red:#e11d2e;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1424;--card:#172138;--text:#eef1f8;--muted:#9aa5bf;color-scheme:dark}}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;position:sticky;top:0;z-index:5}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.4rem;font-weight:800}
+.logo span{background:var(--yellow);border-radius:10px;padding:4px 8px;font-size:1.2rem}
+.hbtns{display:flex;gap:14px;align-items:center}
+.cartbtn,.adminbtn{position:relative;background:none;border:0;color:#fff;cursor:pointer}
+.cartbtn{font-size:1.7rem}.adminbtn{font-size:.85rem;opacity:.8;border:1px solid #fff6;border-radius:8px;padding:5px 10px}
+.badge{position:absolute;top:-6px;right:-8px;background:var(--red);color:#fff;font-size:.7rem;font-weight:700;border-radius:99px;min-width:20px;height:20px;display:grid;place-items:center}
+.hero{background:linear-gradient(105deg,#0f3d4a 45%,#0f3d4a88),url("https://images.unsplash.com/photo-1729701494055-a83930600429?auto=format&fit=crop&w=1400&q=70") center/cover,#0f3d4a;color:#fff;padding:48px 20px}
+.hero h2{font-size:clamp(1.9rem,5vw,3.2rem);line-height:1.1}
+.hero h2 em{color:var(--gold);font-style:normal;display:block}
+.hero p{margin:12px 0 18px;opacity:.9}
+.btn{background:var(--yellow);color:#fff;border:0;border-radius:8px;font-weight:700;padding:10px 16px;cursor:pointer;font-size:.95rem}
+.btn:hover{filter:brightness(.95)}.size{margin-bottom:8px;padding:7px}.btn.wa{background:#25d366;color:#06361a}.cartform input{margin-bottom:8px}.btn.sec{background:#8882;color:var(--text)}.btn.dan{background:var(--red);color:#fff}.btn.sm{padding:6px 10px;font-size:.8rem}
+main{max-width:1400px;margin:0 auto;padding:20px;display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:860px){main{grid-template-columns:minmax(0,1fr) 320px;align-items:start}aside{position:sticky;top:90px}}
+.nav{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
+.nav button{white-space:nowrap;border:1px solid #d9deea;background:var(--card);color:var(--text);border-radius:99px;padding:9px 16px;font-weight:600;cursor:pointer;text-transform:capitalize}
+.nav button.active{background:var(--yellow);color:#fff;border-color:var(--yellow)}
+.menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.food-card{background:var(--card);border-radius:14px;padding:12px;box-shadow:0 2px 8px #0001;position:relative}
+.pic{height:120px;border-radius:10px;overflow:hidden;background:var(--bg);display:grid;place-items:center;font-size:3.4rem}
+.pic img{width:100%;height:100%;object-fit:cover}
+.tag{position:absolute;top:18px;right:18px;background:var(--yellow);color:#fff;font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:99px}
+.food-card h3{margin:10px 0 2px;font-size:1.05rem}
+.price{color:var(--red);font-weight:800;font-size:1.1rem;margin-bottom:10px}
+.food-card .btn{width:100%;font-size:.85rem}
+.panel{background:var(--card);border-radius:14px;box-shadow:0 2px 8px #0001;overflow:hidden}
+.panel h3{background:var(--navy);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;font-size:1rem}
+.panel h3 .badge{position:static}
+.items{padding:6px 14px;max-height:340px;overflow-y:auto}
+.empty{color:var(--muted);padding:18px 0;text-align:center}
+.item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #8883}
+.item .th{width:44px;height:44px;border-radius:8px;overflow:hidden;display:grid;place-items:center;font-size:1.6rem;background:var(--bg)}
+.item .th img{width:100%;height:100%;object-fit:cover}
+.item .info{flex:1;font-size:.9rem}.item b{display:block}
+.qty{display:flex;align-items:center;gap:6px;margin-top:4px}
+.qty button,.rm{width:24px;height:24px;border-radius:50%;border:1px solid #8886;background:var(--card);color:var(--text);cursor:pointer;font-weight:700}
+.rm{background:var(--red);color:#fff;border:0}
+.total{padding:14px 16px}.total span{color:var(--muted);font-weight:600}
+.total strong{display:block;font-size:2rem;margin:2px 0 12px}
+.total .btn{width:100%}
+.mood{margin-top:14px;background:var(--navy);color:#fff;border-radius:14px;text-align:center;padding:16px}
+.mood .stars{color:var(--gold);letter-spacing:3px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,100px);background:var(--navy);color:#fff;padding:12px 20px;border-radius:10px;transition:.3s;z-index:99;max-width:90%;text-align:center}
+.toast.show{transform:translate(-50%,0)}
+.ticker{background:var(--navy);color:#fff;overflow:hidden;white-space:nowrap;border-top:3px solid var(--gold);padding:12px 0}
+.ticker span{display:inline-block;padding-left:100%;animation:scroll 16s linear infinite;font-weight:600;letter-spacing:.5px}
+.ticker b{color:var(--gold)}
+.ticker:hover span{animation-play-state:paused}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+@media (prefers-reduced-motion:reduce){.ticker span{animation:none;padding-left:0}}
+footer{text-align:center;color:var(--muted);padding:20px;font-size:.85rem}
+/* admin */
+.ov{position:fixed;inset:0;background:#000a;z-index:50;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px}
+.ov.open{display:flex}
+.modal{background:var(--card);border-radius:14px;width:100%;max-width:720px;padding:20px;margin:auto}
+.modal h2{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{flex:1}
+label{display:block;font-size:.8rem;font-weight:600;margin:8px 0 3px;color:var(--muted)}
+input,select{width:100%;padding:9px;border-radius:8px;border:1px solid #8886;background:var(--bg);color:var(--text);font-size:.95rem}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chk{display:flex;align-items:center;gap:8px;margin:10px 0}.chk input{width:auto}
+.arow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #8883;font-size:.9rem}
+.arow .th{width:40px;height:40px;border-radius:8px;overflow:hidden;display:grid;place-items:center;background:var(--bg)}
+.arow .th img{width:100%;height:100%;object-fit:cover}.arow .grow{flex:1}
+.hint{font-size:.78rem;color:var(--muted);margin-top:8px}
+.hide{display:none}
+html,body{max-width:100%}body{overflow-x:clip}
+img{max-width:100%}.arow{flex-wrap:wrap}.modal{max-width:min(720px,100%)}
+@media(min-width:1200px){.menu{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}.hero{padding:48px 6vw}main{padding:28px 4vw}}
+@media(max-width:600px){
+ header{padding:10px 12px}.logo{font-size:1.15rem}.logo span{font-size:1rem}
+ .hero{padding:30px 14px}.hero p{font-size:.95rem}
+ main{padding:12px;gap:14px}
+ .menu{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .food-card{padding:9px}.pic{height:105px}.food-card h3{font-size:.95rem}.price{font-size:1rem}
+ .food-card .btn{font-size:.8rem;padding:9px 6px}.size{padding:6px;font-size:.85rem}
+ .nav button{padding:8px 13px;font-size:.85rem}
+ .row{grid-template-columns:1fr}.ov{padding:10px}.modal{padding:14px}
+ .ticker span{animation-duration:12s}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span>💊</span> CareFirst Pharmacy</div>
+  <div class="hbtns">
+    <button class="adminbtn" id="adminOpen">🔒 Admin</button>
+    <button class="cartbtn" id="cartTop" aria-label="Cart">🛒<span class="badge" id="badge">0</span></button>
+  </div>
+</header>
+
+<section class="hero">
+  <h2>Your Health, <em>Our Care</em></h2>
+  <p>Vitamins, wellness and first-aid essentials delivered to you.</p>
+  <button class="btn" id="orderNow">Shop Now ›</button>
+</section>
+
+<main>
+  <section id="menuSection">
+    <nav class="nav" id="nav"></nav>
+    <div class="menu" id="menu"></div>
+  </section>
+  <aside id="cart">
+    <div class="panel">
+      <h3>🛒 Your Cart <span class="badge" id="badge2">0</span></h3>
+      <div class="items" id="items"></div>
+      <div class="total"><span>Total:</span><strong id="total">₦0</strong>
+        <div class="cartform"><input id="c-name" placeholder="Your name"><input id="c-addr" placeholder="Delivery address"></div>
+        <button class="btn wa" id="checkout">💬 Order on WhatsApp</button></div>
+    </div>
+    <div class="mood"><div style="font-size:1.8rem">🩺</div><div class="stars">★★★★★</div><b>Care You Trust</b><div>☺</div></div>
+  </aside>
+</main>
+<div class="ticker"><span>⚡ Powered by <b>Ebene-Vento Technology</b> &nbsp;•&nbsp; Websites, apps &amp; digital solutions &nbsp;•&nbsp; Powered by <b>Ebene-Vento Technology</b> ⚡</span></div>
+<footer>© 2026 CareFirst Pharmacy · Read the label and use as directed. Ask your pharmacist if unsure.</footer>
+
+<!-- Admin -->
+<div class="ov" id="ov"><div class="modal">
+  <div id="login">
+    <h2>Admin Login <button class="btn sec sm" data-close>✕</button></h2>
+    <label>Password</label><input type="password" id="pw" placeholder="Enter admin password">
+    <button class="btn" style="margin-top:12px;width:100%" id="loginBtn">Login</button>
+    <p class="hint">Default password: <b>admin123</b> (change it in Settings after login).</p>
+  </div>
+  <div id="panel" class="hide">
+    <h2>Admin Panel <button class="btn sec sm" data-close>✕</button></h2>
+    <div class="tabs"><button class="btn" data-tab="t-menu">Menu</button><button class="btn sec" data-tab="t-orders">Orders</button><button class="btn sec" data-tab="t-set">Settings</button></div>
+
+    <div id="t-menu">
+      <form id="form" onsubmit="return false">
+        <b id="formTitle">Add new item</b>
+        <input type="hidden" id="f-id">
+        <div class="row"><div><label>Name</label><input id="f-name" required></div><div><label>Price (₦)</label><input id="f-price" type="number" step="1" min="0"></div></div>
+        <div class="row"><div><label>Category</label><input id="f-cat" list="cats" placeholder="e.g. vitamins"><datalist id="cats"></datalist></div><div><label>Emoji (fallback)</label><input id="f-emoji" value="🛍️"></div></div>
+        <label>Image URL (online link)</label><input id="f-img" placeholder="https://...jpg">
+        <label>Packs / options (comma separated, leave empty if none)</label><input id="f-sizes" value="">
+        <div class="chk"><input type="checkbox" id="f-pop"><span>Mark as Popular</span></div>
+        <button class="btn" id="saveItem">Save item</button> <button class="btn sec" id="cancelEdit">Clear</button>
+      </form>
+      <div id="alist" style="margin-top:14px"></div>
+      <button class="btn dan sm" id="reset" style="margin-top:12px">Reset menu to defaults</button>
+    </div>
+
+    <div id="t-orders" class="hide"><div id="olist"></div><button class="btn dan sm" id="clearOrders" style="margin-top:10px">Clear orders</button></div>
+
+    <div id="t-set" class="hide">
+      <label>WhatsApp number (international format, no + or spaces)</label><input id="s-wa" inputmode="numeric">
+      <label>Currency symbol</label><input id="s-cur" maxlength="4">
+      <button class="btn" style="margin:10px 0 18px" id="saveSet">Save settings</button>
+      <label>New admin password</label><input type="password" id="newpw">
+      <button class="btn" style="margin-top:10px" id="savePw">Change password</button>
+      <button class="btn sec" style="margin-top:10px" id="logout">Logout</button>
+      <p class="hint">Data is saved in this browser only (localStorage). The password check runs in the page, so it keeps casual visitors out but is not real security. For a live business, use a backend.</p>
+    </div>
+  </div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const U = id => `https://unsplash.com/photos/${id}/download?force=true&w=640`;
+const P = id => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=640&q=70`;
+const DEFAULTS = [
+  {id:1,name:"Vitamin C Supplement",price:6500,cat:"vitamins",emoji:"💊",popular:true,img:P("photo-1729701494051-7013553fafa5"),sizes:"30 capsules,60 capsules"},
+  {id:2,name:"Multivitamin Jar",price:8500,cat:"vitamins",emoji:"💊",img:P("photo-1729701494012-8e9d5c5ed6b7"),sizes:"30 capsules,60 capsules"},
+  {id:3,name:"Gummy Vitamins",price:9000,cat:"vitamins",emoji:"🍬",img:P("photo-1648139347040-857f024f8da4"),sizes:""},
+  {id:4,name:"Omega-3 Fish Oil",price:12000,cat:"vitamins",emoji:"🐟",img:P("photo-1687200267616-83a40f3e674c"),sizes:"30 capsules,60 capsules"},
+  {id:5,name:"Vitamin Trio Pack",price:18000,cat:"vitamins",emoji:"💊",img:P("photo-1729701494004-6ef697155347"),sizes:""},
+  {id:6,name:"Everyday Pain Relief Tablets",price:1500,cat:"medicines",emoji:"💊",img:P("photo-1544829885-9a58b457fd5a"),sizes:"10 tablets,20 tablets"},
+  {id:7,name:"First Aid Kit",price:15000,cat:"first-aid",emoji:"🩹",img:U("-SJ7rkvb6Jc"),sizes:""},
+  {id:8,name:"Pill Storage Bottle",price:3500,cat:"first-aid",emoji:"🧴",img:U("KG3SLRswbVc"),sizes:""},
+  {id:9,name:"Vitamin D3 Jar",price:7500,cat:"vitamins",emoji:"💊",img:P("photo-1729701462019-0b1474fc8c4d"),sizes:"30 capsules,60 capsules"},
+  {id:10,name:"Daily Wellness Vitamins",price:10500,cat:"vitamins",emoji:"💊",img:P("photo-1690959794962-d8b3a18aa784"),sizes:"30 capsules,60 capsules"},
+  {id:11,name:"Immune Support Pack",price:14000,cat:"vitamins",emoji:"💊",img:P("photo-1729701494055-a83930600429"),sizes:""},
+  {id:12,name:"Cold & Flu Relief Tablets",price:2000,cat:"medicines",emoji:"💊",img:U("2vaUkcFfWtE"),sizes:"10 tablets,20 tablets"},
+  {id:13,name:"Weekly Pill Organizer",price:4000,cat:"first-aid",emoji:"🗓️",img:U("D5G-Df-pmUw"),sizes:""},
+  {id:14,name:"Digital Blood Pressure Monitor",price:28000,cat:"devices",emoji:"🩺",img:"https://images.pexels.com/photos/8670204/pexels-photo-8670204.jpeg?auto=compress&cs=tinysrgb&w=640",sizes:""},
+  {id:15,name:"Blood Pressure Cuff",price:18000,cat:"devices",emoji:"🩺",img:"https://images.pexels.com/photos/5721676/pexels-photo-5721676.jpeg?auto=compress&cs=tinysrgb&w=640",sizes:""}
+];
+let WA = store.get("cf_wa","2347066949022"), CUR = store.get("cf_cur2","₦");
+const $ = s => document.querySelector(s);
+const money = n => CUR + Number(n).toLocaleString("en-NG",{maximumFractionDigits:2});
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+let MENU = store.get("cf_menu1", DEFAULTS);
+const cart = {};
+let cat = "all", admin = false;
+
+function pic(m){
+  const e = esc(m.emoji||"🛍️");
+  return m.img ? `<img src="${esc(m.img)}" data-alt="${esc(m.alt||"")}" data-e="${e}" alt="${esc(m.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="imgFail(this)">` : e;
+}
+function imgFail(i){ const a=i.dataset.alt; if(a){ i.dataset.alt=""; i.src=a; } else i.replaceWith(document.createTextNode(i.dataset.e)); }
+function renderNav(){
+  const cats = ["all", ...new Set(MENU.map(m => m.cat).filter(Boolean))];
+  if(!cats.includes(cat)) cat = "all";
+  $("#nav").innerHTML = cats.map(c => `<button data-cat="${esc(c)}" class="${c===cat?"active":""}">${esc(c)}</button>`).join("");
+  $("#cats").innerHTML = cats.filter(c => c!=="all").map(c => `<option value="${esc(c)}">`).join("");
+}
+function renderMenu(){
+  renderNav();
+  const list = MENU.filter(m => cat==="all" || m.cat===cat);
+  $("#menu").innerHTML = list.length ? list.map(m => `
+    <div class="food-card">${m.popular?'<span class="tag">Popular</span>':''}
+      <div class="pic">${pic(m)}</div><h3>${esc(m.name)}</h3><div class="price">${money(m.price)}</div>
+      ${(m.sizes||"").trim()?`<select class="size" id="sz${m.id}" aria-label="Pack">${String(m.sizes).split(",").map(z=>`<option>${esc(z.trim())}</option>`).join("")}</select>`:""}
+      <button class="btn" data-add="${m.id}">🛒 Add to Cart</button></div>`).join("") : '<p class="empty">No items yet.</p>';
+}
+function renderCart(){
+  let count = 0, total = 0;
+  const rows = Object.keys(cart).map(id => {
+    const sz = id.split("|")[1]; const m = MENU.find(x => x.id == id.split("|")[0]); if(!m){ delete cart[id]; return ""; }
+    const q = cart[id]; count += q; total += q*m.price;
+    return `<div class="item"><div class="th">${pic(m)}</div><div class="info"><b>${esc(m.name)}</b>${sz==="-"?"":"Pack "+esc(sz)+" · "}${money(m.price)}
+      <div class="qty"><button data-dec="${id}">−</button>${q}<button data-inc="${id}">+</button></div></div>
+      <button class="rm" data-rm="${id}" aria-label="Remove">✕</button></div>`;
+  }).join("");
+  $("#items").innerHTML = rows || '<div class="empty">Your cart is empty</div>';
+  $("#badge").textContent = $("#badge2").textContent = count;
+  $("#total").textContent = money(total);
+}
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove("show"),2200); }
+
+/* ---------- Admin ---------- */
+function renderAdmin(){
+  renderNav();
+  $("#alist").innerHTML = MENU.map(m => `<div class="arow"><div class="th">${pic(m)}</div>
+    <div class="grow"><b>${esc(m.name)}</b> · ${money(m.price)}<br><small>${esc(m.cat)}${m.popular?" · ⭐ popular":""}</small></div>
+    <button class="btn sec sm" data-edit="${m.id}">Edit</button><button class="btn dan sm" data-del="${m.id}">Delete</button></div>`).join("");
+  const orders = store.get("cf_orders", []);
+  $("#olist").innerHTML = orders.length ? orders.slice().reverse().map(o => `<div class="arow"><div class="grow"><b>${esc(o.time)}</b> · ${money(o.total)}<br><small>${o.lines.map(esc).join(", ")}</small></div></div>`).join("") : '<p class="empty">No orders yet.</p>';
+}
+function clearForm(){ ["f-id","f-name","f-price","f-cat","f-img"].forEach(i => $("#"+i).value=""); $("#f-emoji").value="🛍️"; $("#f-sizes").value=""; $("#f-pop").checked=false; $("#formTitle").textContent="Add new item"; }
+function saveMenu(){ store.set("cf_menu1", MENU); renderMenu(); renderCart(); renderAdmin(); }
+
+$("#saveItem").onclick = () => {
+  const name = $("#f-name").value.trim(), price = parseFloat($("#f-price").value);
+  if(!name || isNaN(price)) return toast("Enter a name and a valid price");
+  const id = $("#f-id").value ? +$("#f-id").value : Date.now();
+  const item = {id, name, price, cat:$("#f-cat").value.trim().toLowerCase()||"other", emoji:$("#f-emoji").value||"🛍️", img:$("#f-img").value.trim(), alt:(MENU.find(m=>m.id===id)||{}).img===$("#f-img").value.trim()?(MENU.find(m=>m.id===id)||{}).alt:"", popular:$("#f-pop").checked, sizes:$("#f-sizes").value.trim()||""};
+  const i = MENU.findIndex(m => m.id === id);
+  i >= 0 ? MENU[i] = item : MENU.push(item);
+  saveMenu(); clearForm(); toast("Menu updated ✔");
+};
+$("#cancelEdit").onclick = clearForm;
+$("#reset").onclick = () => { if(confirm("Reset the menu to defaults?")){ MENU = JSON.parse(JSON.stringify(DEFAULTS)); saveMenu(); } };
+$("#clearOrders").onclick = () => { store.set("cf_orders", []); renderAdmin(); };
+$("#loginBtn").onclick = () => {
+  if($("#pw").value === store.get("cf_pw", "admin123")){ admin = true; $("#s-wa").value = WA; $("#s-cur").value = CUR; $("#login").classList.add("hide"); $("#panel").classList.remove("hide"); $("#pw").value=""; renderAdmin(); }
+  else toast("Wrong password");
+};
+$("#pw").addEventListener("keydown", e => { if(e.key==="Enter") $("#loginBtn").click(); });
+$("#saveSet").onclick = () => {
+  const w = $("#s-wa").value.replace(/\D/g,""); if(w.length<8) return toast("Enter a valid WhatsApp number");
+  WA = w; CUR = $("#s-cur").value.trim() || "₦"; store.set("cf_wa", WA); store.set("cf_cur2", CUR);
+  renderMenu(); renderCart(); renderAdmin(); toast("Settings saved ✔");
+};
+$("#savePw").onclick = () => { const p=$("#newpw").value; if(p.length<4) return toast("Use at least 4 characters"); store.set("cf_pw", p); $("#newpw").value=""; toast("Password changed ✔"); };
+$("#logout").onclick = () => { admin=false; $("#panel").classList.add("hide"); $("#login").classList.remove("hide"); $("#ov").classList.remove("open"); };
+$("#adminOpen").onclick = () => $("#ov").classList.add("open");
+
+/* ---------- Clicks ---------- */
+document.addEventListener("click", e => {
+  const b = e.target.closest("button"); if(!b) return;
+  const d = b.dataset;
+  if(d.add){ const k=d.add+"|"+($("#sz"+d.add)||{value:"-"}).value; cart[k]=(cart[k]||0)+1; renderCart(); toast("Added to cart ✔"); }
+  if(d.inc){ cart[d.inc]++; renderCart(); }
+  if(d.dec){ if(--cart[d.dec]<=0) delete cart[d.dec]; renderCart(); }
+  if(d.rm){ delete cart[d.rm]; renderCart(); }
+  if(d.cat !== undefined){ cat = d.cat; renderMenu(); }
+  if(d.close !== undefined) $("#ov").classList.remove("open");
+  if(d.del && confirm("Delete this item?")){ MENU = MENU.filter(m => m.id != d.del); saveMenu(); }
+  if(d.edit){
+    const m = MENU.find(x => x.id == d.edit);
+    $("#f-id").value=m.id; $("#f-name").value=m.name; $("#f-price").value=m.price; $("#f-cat").value=m.cat;
+    $("#f-emoji").value=m.emoji||""; $("#f-img").value=m.img||""; $("#f-sizes").value=m.sizes||""; $("#f-pop").checked=!!m.popular;
+    $("#formTitle").textContent="Edit item"; $("#f-name").scrollIntoView({block:"center"});
+  }
+  if(d.tab){ ["t-menu","t-orders","t-set"].forEach(t => $("#"+t).classList.toggle("hide", t!==d.tab));
+    document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("sec", x!==b)); }
+});
+$("#orderNow").onclick = () => $("#menuSection").scrollIntoView();
+$("#cartTop").onclick = () => $("#cart").scrollIntoView();
+$("#checkout").onclick = () => {
+  const ids = Object.keys(cart); if(!ids.length) return toast("Your cart is empty");
+  let total = 0; const lines = ids.map(id => { const m = MENU.find(x => x.id==id.split("|")[0]); total += cart[id]*m.price; return `${cart[id]}x ${m.name} ${id.split("|")[1]==="-"?"":"(Pack "+id.split("|")[1]+") "}- ${money(cart[id]*m.price)}`; });
+  const name = $("#c-name").value.trim(), addr = $("#c-addr").value.trim();
+  const msg = `Hello CareFirst Pharmacy, I would like to order:\n\n${lines.join("\n")}\n\nTotal: ${money(total)}` + (name?`\nName: ${name}`:"") + (addr?`\nAddress: ${addr}`:"");
+  const orders = store.get("cf_orders", []); orders.push({time:new Date().toLocaleString(), total:total, lines}); store.set("cf_orders", orders);
+  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
+  ids.forEach(id => delete cart[id]); renderCart(); toast("Opening WhatsApp… 💬");
+};
+renderMenu(); renderCart();
+</script>
+</body>
+</html>
